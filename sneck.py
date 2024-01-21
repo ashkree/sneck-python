@@ -17,6 +17,7 @@ SCREEN_WIDTH = SCREEN_HEIGHT = CELL_SIZE * CELL_NUMBER
 
 # colours
 CONIFER = (175, 215, 70)
+CAMO = (127, 153, 66)
 TOMATO = (255, 81, 87)
 CORNFLOWER = (87, 137, 255)
 
@@ -168,6 +169,7 @@ class MAIN:
         self.check_collisions()
 
     def draw_elements(self, screen):
+        self.draw_grass(screen)
         self.fruit.draw_fruit(screen)
         self.snake.draw_snake(screen)
 
@@ -190,6 +192,30 @@ class MAIN:
         pygame.quit()
         sys.exit()
 
+    def draw_grass(self, screen):
+
+        for row in range(CELL_NUMBER):
+
+            if row % 2 == 0:
+
+                for col in range(CELL_NUMBER):
+
+                    grass_rect = pygame.Rect(
+                        col * CELL_SIZE,
+                        row * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+
+                    if (col % 2) == 0:
+                        pygame.draw.rect(screen, CAMO, grass_rect)
+            else:
+                for col in range(CELL_NUMBER):
+
+                    grass_rect = pygame.Rect(
+                        col * CELL_SIZE,
+                        row * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+
+                    if (col % 2) == 1:
+                        pygame.draw.rect(screen, CAMO, grass_rect)
+
 
 # handlers
 
@@ -207,7 +233,7 @@ def main():
 
     # event timer, handles when to redraw the snake
     SCREEN_UPDATE = pygame.USEREVENT
-    pygame.time.set_timer(SCREEN_UPDATE, 100)
+    pygame.time.set_timer(SCREEN_UPDATE, 125)
 
     while True:
 
