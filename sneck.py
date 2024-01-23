@@ -20,8 +20,7 @@ CONIFER = (175, 215, 70)
 CAMO = (127, 153, 66)
 TOMATO = (255, 81, 87)
 CORNFLOWER = (87, 137, 255)
-
-# directions do not touch
+WHITE = (255, 255, 255)
 
 
 class FRUIT:
@@ -54,6 +53,7 @@ class SNAKE:
         self.body = [Vector2(5, 10), Vector2(4, 10), Vector2(3, 10)]
         self.direction = self.RIGHT
         self.new_block = False
+        self.crunch_sound = pygame.mixer.Sound("sound/crunch.wav")
         self.load_graphics()
 
     def draw_snake(self, screen):
@@ -154,6 +154,9 @@ class SNAKE:
         else:
             self.tail = self.tail_down
 
+    def play_crunch(self):
+        self.crunch_sound.play()
+
 
 class MAIN:
 
@@ -170,6 +173,7 @@ class MAIN:
 
     def draw_elements(self, screen):
         self.draw_grass(screen)
+        self.draw_score(screen)
         self.fruit.draw_fruit(screen)
         self.snake.draw_snake(screen)
 
@@ -178,6 +182,7 @@ class MAIN:
         if self.fruit.pos == self.snake.body[0]:
             self.fruit.randomize()
             self.snake.add_block()
+            self.snake.play_crunch()
 
     def check_collisions(self):
 
@@ -216,12 +221,33 @@ class MAIN:
                     if (col % 2) == 1:
                         pygame.draw.rect(screen, CAMO, grass_rect)
 
+    def draw_score(self, screen):
+
+        GAME_FONT = pygame.font.Font("font/PoetsenOne-Regular.ttf", 25)
+
+        score_text = str(len(self.snake.body) - 3)
+        score_surface = GAME_FONT.render(score_text, True, WHITE)
+        score_x = int(CELL_SIZE*CELL_NUMBER - 60)
+        score_y = int(CELL_SIZE*CELL_NUMBER - 40)
+        score_rect = score_surface.get_rect(center=(score_x, score_y))
+        apple_rect = self.fruit.apple.get_rect(
+            midright=(score_rect.left, score_rect.centery))
+
+        bg_rect = pygame.Rect(
+            apple_rect.left, apple_rect.top, apple_rect.width + score_rect.width + 6, apple_rect.height)
+
+        pygame.draw.rect(screen, CONIFER, bg_rect)
+        screen.blit(score_surface, score_rect)
+        screen.blit(self.fruit.apple, apple_rect)
+        pygame.draw.rect(screen, CAMO, bg_rect, 2)
+
 
 # handlers
 
 
 def main():
 
+    pygame.mixer.pre_init(44100, -16, 2, 512)
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Snek")
