@@ -51,7 +51,7 @@ class SNAKE:
     def __init__(self) -> None:
 
         self.body = [Vector2(5, 10), Vector2(4, 10), Vector2(3, 10)]
-        self.direction = self.RIGHT
+        self.direction = Vector2(0, 0)
         self.new_block = False
         self.crunch_sound = pygame.mixer.Sound("sound/crunch.wav")
         self.load_graphics()
@@ -157,6 +157,10 @@ class SNAKE:
     def play_crunch(self):
         self.crunch_sound.play()
 
+    def reset(self):
+        self.body = [Vector2(5, 10), Vector2(4, 10), Vector2(3, 10)]
+        self.direction = Vector2(0, 0)
+
 
 class MAIN:
 
@@ -184,6 +188,11 @@ class MAIN:
             self.snake.add_block()
             self.snake.play_crunch()
 
+        for block in self.snake.body[1:]:
+
+            if block == self.fruit.pos:
+                self.fruit.randomize()
+
     def check_collisions(self):
 
         if not 0 <= self.snake.body[0].x < CELL_NUMBER or not 0 <= self.snake.body[0].y < CELL_NUMBER:
@@ -194,8 +203,7 @@ class MAIN:
                 self.game_over()
 
     def game_over(self):
-        pygame.quit()
-        sys.exit()
+        self.snake.reset()
 
     def draw_grass(self, screen):
 
@@ -263,6 +271,8 @@ def main():
 
     while True:
 
+        inputs = []
+
         # Get User Input
         for e in pygame.event.get():
 
@@ -273,32 +283,35 @@ def main():
 
             if e.type == SCREEN_UPDATE:
                 main_game.update()
+                moved = True
 
             if e.type == pygame.KEYDOWN:
+                if (moved):
+                    if (e.key == pygame.K_w or e.key == pygame.K_UP):
+                        if snake.direction != snake.DOWN:
+                            snake.direction = snake.UP
+                            moved = False
 
-                if (e.key == pygame.K_w or e.key == pygame.K_UP):
-                    if snake.direction != snake.DOWN:
-                        snake.direction = snake.UP
+                    if (e.key == pygame.K_s or e.key == pygame.K_DOWN):
+                        if snake.direction != snake.UP:
+                            snake.direction = snake.DOWN
+                            moved = False
 
-                if (e.key == pygame.K_s or e.key == pygame.K_DOWN):
-                    if snake.direction != snake.UP:
-                        snake.direction = snake.DOWN
+                    if (e.key == pygame.K_a or e.key == pygame.K_LEFT):
+                        if snake.direction != snake.RIGHT:
+                            snake.direction = snake.LEFT
+                            moved = False
 
-                if (e.key == pygame.K_a or e.key == pygame.K_LEFT):
-                    if snake.direction != snake.RIGHT:
-                        snake.direction = snake.LEFT
-
-                if (e.key == pygame.K_d or e.key == pygame.K_RIGHT):
-                    if snake.direction != snake.LEFT:
-                        snake.direction = snake.RIGHT
+                    if (e.key == pygame.K_d or e.key == pygame.K_RIGHT):
+                        if snake.direction != snake.LEFT:
+                            snake.direction = snake.RIGHT
+                            moved = False
 
         # Draw Elements
         screen.fill(CONIFER)
         main_game.draw_elements(screen)
         pygame.display.update()
         clock.tick(FPS)
-
-    return 0
 
 
 if __name__ == "__main__":
