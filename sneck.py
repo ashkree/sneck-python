@@ -290,22 +290,20 @@ def main():
                     if (e.key == pygame.K_w or e.key == pygame.K_UP):
                         if snake.direction != snake.DOWN:
                             snake.direction = snake.UP
-                            moved = False
 
                     if (e.key == pygame.K_s or e.key == pygame.K_DOWN):
                         if snake.direction != snake.UP:
                             snake.direction = snake.DOWN
-                            moved = False
 
                     if (e.key == pygame.K_a or e.key == pygame.K_LEFT):
                         if snake.direction != snake.RIGHT:
                             snake.direction = snake.LEFT
-                            moved = False
 
                     if (e.key == pygame.K_d or e.key == pygame.K_RIGHT):
                         if snake.direction != snake.LEFT:
                             snake.direction = snake.RIGHT
-                            moved = False
+
+                    moved = False
 
         # Draw Elements
         screen.fill(CONIFER)
